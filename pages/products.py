@@ -1,9 +1,10 @@
 import streamlit as st
+from duckdb_utils import connect_duckdb, create_tables
 
 st.header("Electronics Store")
-
-def reset_form():
-    st.session_state["text_input"] = ""
+con = connect_duckdb()
+create_tables(con)
+con.execute("insert into page_visits values('/products', CURRENT_TIMESTAMP);")
     
 def calculate_total_price(item, quantity, promo_code):
     price = 0
@@ -37,18 +38,17 @@ with col3:
     st.write("Vintage Camera")
     st.write("Price: $199")
 
-with st.form("cart"):    
+with st.form("cart", clear_on_submit=True):    
     item_to_buy = st.selectbox("Select an item to buy", ["Macbook Air", "PS5", "Vintage Camera"])
     quantity = st.number_input("Quantity", min_value=1, max_value=10, value=1)
+    mobile_number = st.number_input("Please enter your mobile number", min_value=9000000000, max_value=9999999999)
     delivery_location = st.selectbox("Delivery Location", ["Office", "Home", "Other"])
     promo_code = st.text_input("Promo Code(Optional)")
     st.write("Total Price: $", calculate_total_price(item_to_buy, quantity, promo_code))
-    clear_cart = st.form_submit_button("Clear Cart")
-    submit_button = st.form_submit_button("Buy Now")
     payment_option = st.radio("Please select Payment Option", ["Credit Card", "Debit Card", "UPI", "Net Banking"])
-    
-    if clear_cart:
-        reset_form()
+    submit_button = st.form_submit_button("Buy Now")
+
+
 
     if submit_button:
         st.write("Payment Successful")
