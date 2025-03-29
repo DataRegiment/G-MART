@@ -1,5 +1,6 @@
 import streamlit as st
 from duckdb_utils import connect_duckdb, create_tables
+from events import record_purchase_event
 
 st.header("Electronics Store")
 con = connect_duckdb()
@@ -44,12 +45,25 @@ with st.form("cart", clear_on_submit=True):
     mobile_number = st.number_input("Please enter your mobile number", min_value=9000000000, max_value=9999999999)
     delivery_location = st.selectbox("Delivery Location", ["Office", "Home", "Other"])
     promo_code = st.text_input("Promo Code(Optional)")
-    st.write("Total Price: $", calculate_total_price(item_to_buy, quantity, promo_code))
+    total_price = calculate_total_price(item_to_buy, quantity, promo_code)
+    st.write("Total Price: $", total_price)
     payment_option = st.radio("Please select Payment Option", ["Credit Card", "Debit Card", "UPI", "Net Banking"])
     submit_button = st.form_submit_button("Buy Now")
 
 
 
     if submit_button:
-        st.write("Payment Successful")
-        st.write("Thank you for shopping with us!")
+        success, message = record_purchase_event(
+            item_to_buy,
+            quantity,
+            mobile_number,
+            total_price,
+            delivery_location,
+            payment_option
+        )
+        
+        if success:
+            st.success("Payment Successful")
+            st.success("Thank you for shopping with us!")
+        else:
+            st.error(f"Purchase failed: {message}")
