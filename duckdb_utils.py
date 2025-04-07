@@ -1,19 +1,15 @@
 import duckdb
 import streamlit as st
-from dotenv import load_dotenv
-import os
 import uuid
-
-load_dotenv()
 
 def connect_duckdb():
     if 'conn' not in st.session_state:
-        st.session_state.conn = duckdb.connect(database='my_database.db', read_only=False)
+        st.session_state.conn = duckdb.connect(database=':memory:', read_only=False)
     return st.session_state.conn
 
-def create_tables(con):
-    con.execute("create table IF NOT EXISTS page_visits(page_name TEXT, visit_ts datetime);")
-    con.execute("create table IF NOT EXISTS clickstream_events(event_type TEXT, visit_ts datetime);")
+# def create_tables(con):
+#     con.execute("create table IF NOT EXISTS page_visits(page_name TEXT, visit_ts datetime);")
+#     con.execute("create table IF NOT EXISTS clickstream_events(event_type TEXT, visit_ts datetime);")
     # con.execute("""CREATE TABLE IF NOT EXISTS orders (
     #             id UUID PRIMARY KEY  DEFAULT  uuid(),
     #             product VARCHAR,
@@ -32,9 +28,9 @@ def load_extentions_and_secrets(con):
     con.execute(f"""
                 CREATE OR REPLACE SECRET (
                 TYPE s3,
-                KEY_ID '{os.getenv("AWS_ACCESS_KEY_ID")}',
-                SECRET '{os.getenv("AWS_SECRET_ACCESS_KEY")}',
-                REGION '{os.getenv("AWS_REGION")}'
+                KEY_ID '{st.secrets["AWS_ACCESS_KEY_ID"]}',
+                SECRET '{st.secrets["AWS_SECRET_ACCESS_KEY"]}',
+                REGION '{st.secrets["AWS_REGION"]}'
             );
                 """)
 

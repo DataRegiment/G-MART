@@ -4,7 +4,7 @@ from duckdb_utils import *
 
 st.header("Electronics Store")
 con = connect_duckdb()
-create_tables(con)
+# create_tables(con)
 load_extentions_and_secrets(con)
 unique_filename = get_unique_filename()
 # con.execute("insert into page_visits values('/products', CURRENT_TIMESTAMP);")
