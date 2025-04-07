@@ -2,7 +2,9 @@ import streamlit as st
 from duckdb_utils import *
 
 
-st.header("Welcome to G-MART")
+
+st.image("G-MART.png")
+st.subheader("Ganitans Shopping Mart")
 con = connect_duckdb()
 create_tables(con)
 load_extentions_and_secrets(con)
