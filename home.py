@@ -3,7 +3,7 @@ from duckdb_utils import *
 
 
 
-st.image("G-MART.png")
+st.image("G-Mart.png")
 st.subheader("Ganitans Shopping Mart")
 con = connect_duckdb()
 # create_tables(con)
