@@ -175,3 +175,5 @@ cython_debug/
 
 #duckdb
 *.db*
+*.parquet
+.streamlit/secrets.toml

@@ -1,10 +1,14 @@
 import streamlit as st
-from duckdb_utils import connect_duckdb, create_tables
+from duckdb_utils import *
+
 
 st.header("Electronics Store")
 con = connect_duckdb()
-create_tables(con)
-con.execute("insert into page_visits values('/products', CURRENT_TIMESTAMP);")
+# create_tables(con)
+load_extentions_and_secrets(con)
+unique_filename = get_unique_filename()
+# con.execute("insert into page_visits values('/products', CURRENT_TIMESTAMP);")
+con.execute(f"copy (select '/products' as page_name,CURRENT_TIMESTAMP as visit_ts) to 's3://tgt-southdms/g-mart/page_visits/{unique_filename}'  (FORMAT parquet);")
     
 def calculate_total_price(item, quantity, promo_code):
     price = 0
@@ -44,12 +48,29 @@ with st.form("cart", clear_on_submit=True):
     mobile_number = st.number_input("Please enter your mobile number", min_value=9000000000, max_value=9999999999)
     delivery_location = st.selectbox("Delivery Location", ["Office", "Home", "Other"])
     promo_code = st.text_input("Promo Code(Optional)")
-    st.write("Total Price: $", calculate_total_price(item_to_buy, quantity, promo_code))
+    total_price = calculate_total_price(item_to_buy, quantity, promo_code)
+    st.write("Total Price: $", total_price)
     payment_option = st.radio("Please select Payment Option", ["Credit Card", "Debit Card", "UPI", "Net Banking"])
     submit_button = st.form_submit_button("Buy Now")
 
 
 
     if submit_button:
+        unique_filename = get_unique_filename()
+        # con.execute("insert into page_visits values('/products', CURRENT_TIMESTAMP);")
+        query= (f"""copy (
+                        select uuid() as order_id,
+                        '{item_to_buy}' as product,
+                        {quantity} as quantity,
+                        {mobile_number} as mobile_number,
+                        '{delivery_location}' as delivery_location,
+                        '{promo_code}' as promo_code,
+                        {total_price} as total_price,
+                        '{payment_option}' as payment_option,
+                        CURRENT_TIMESTAMP as created_at
+                        ) to 's3://tgt-southdms/g-mart/orders/{unique_filename}'  (FORMAT parquet);
+                        """)
+        print(query)
+        con.execute(query)
         st.write("Payment Successful")
         st.write("Thank you for shopping with us!")
