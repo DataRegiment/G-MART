@@ -43,17 +43,17 @@ col1, col2, col3 = st.columns(3, border=True)
 
 with col1:
     # st.image("https://picsum.photos/id/0/5000/3333")
-    st.image("assets\M1.jpg")
+    st.image("assets/M1.jpg")
     st.write("Macbook Air")
     st.write("Price: $999")
 
 with col2:
-    st.image("assets\PS5.jpg")
+    st.image("assets/PS5.jpg")
     st.write("PS5")
     st.write("Price: $499")
     
 with col3:
-    st.image("assets\IP14.jpg")
+    st.image("assets/IP14.jpg")
     st.write("iPhone 14")
     st.write("Price: $759")
   
