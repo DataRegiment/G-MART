@@ -1,7 +1,6 @@
 import streamlit as st
 from duckdb_utils import *
 
-
 st.header("Electronics Store")
 con = connect_duckdb()
 # create_tables(con)

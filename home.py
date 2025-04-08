@@ -14,4 +14,7 @@ S3_BUCKET = st.secrets["BASE_S3"]
 con.execute(f"copy (select '/home' as page_name,CURRENT_TIMESTAMP as visit_ts) to '{S3_BUCKET}/page_visits/{unique_filename}'  (FORMAT parquet);")
 # user_name = st.text_input("Please enter your name")
 
+st.page_link(label="Products", page="pages/products.py",icon=":material/shopping_cart:")
+st.page_link(label="Realtime Analytics", page="pages/realtime_analytics.py",icon=":material/analytics:")
+
 # con = duckdb.connect(database=':memory:', read_only=False)
