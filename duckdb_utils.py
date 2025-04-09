@@ -24,7 +24,8 @@ def connect_duckdb():
     #         """)
     
 def load_extentions_and_secrets(con):
-    con.execute("INSTALL httpfs;LOAD httpfs;")
+    con.execute("INSTALL httpfs;")
+    con.execute("LOAD httpfs;")
     con.execute(f"""
                 CREATE OR REPLACE SECRET (
                 TYPE s3,
@@ -33,6 +34,14 @@ def load_extentions_and_secrets(con):
                 REGION '{st.secrets["AWS_REGION"]}'
             );
                 """)
+    try:
+        #Caching
+        con.execute("INSTALL cache_httpfs from community;")
+        con.execute("LOAD cache_httpfs;")
+        #Set cache to memory
+        con.execute("SET cache_httpfs_type='in_mem';")
+    except:
+        pass
 
 def get_unique_filename():
     unique_filename = f"{uuid.uuid4()}.parquet"
