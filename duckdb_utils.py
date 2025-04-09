@@ -44,5 +44,5 @@ def load_extentions_and_secrets(con):
         pass
 
 def get_unique_filename():
-    unique_filename = f"{uuid.uuid4()}.parquet"
+    unique_filename = f"{uuid.uuid4()}.json"
     return unique_filename
