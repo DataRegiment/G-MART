@@ -11,7 +11,7 @@ S3_BUCKET = st.secrets["BASE_S3"]
 if 'total_price' not in st.session_state:
     st.session_state.total_price = 0
 
-con.execute(f"copy (select '/products' as page_name,CURRENT_TIMESTAMP as visit_ts) to '{S3_BUCKET}/page_visits/{unique_filename}'  (FORMAT parquet);")
+con.execute(f"copy (select '/products' as page_name,CURRENT_TIMESTAMP as visit_ts) to '{S3_BUCKET}/page_visits/{unique_filename}'  (FORMAT json);")
 
 # Define product prices
 product_prices = {
@@ -81,7 +81,7 @@ if st.button("Buy Now"):
                     {current_price} as total_price,
                     '{payment_option}' as payment_option,
                     CURRENT_TIMESTAMP as created_at
-                    ) to '{S3_BUCKET}/orders/{unique_filename}'  (FORMAT parquet);
+                    ) to '{S3_BUCKET}/orders/{unique_filename}'  (FORMAT json);
                     """)
     print(query)
     con.execute(query)
