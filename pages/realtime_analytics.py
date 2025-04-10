@@ -16,3 +16,15 @@ except Exception as e:
     sales_data = 0
     
 st.write("### Total Sales: $", sales_data if sales_data is not None else 0)
+
+unique_customers = con.execute(f"select count (distinct mobile_number) as Unique_Customers from delta_scan('{ANALYTICS_S3}/orders/')").fetchdf()
+st.write("### Unique Customers: ", unique_customers.iloc[0, 0] if unique_customers is not None else 0)
+
+sales_by_customer = con.execute(f"""
+                                select mobile_number,sum(total_price) as Total_Sales 
+  from delta_scan("{ANALYTICS_S3}/orders/")
+  group by all
+  order by Total_Sales desc
+                                """).fetchdf()
+st.write("### Sales by Customer")
+st.dataframe(sales_by_customer, use_container_width=True, hide_index=True)
